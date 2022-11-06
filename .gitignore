@@ -1,0 +1,5 @@
+.idea/
+.env
+celerybeat-schedule
+dump.rdb
+*.pyc
