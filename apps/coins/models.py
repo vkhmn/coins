@@ -46,10 +46,9 @@ class Seller(models.Model):
 
 
 class Coin(models.Model):
-    id = models.IntegerField(
-        'Идентификатор монеты',
+    url = models.URLField(
+        'Url монеты',
         unique=True,
-        primary_key=True
     )
     category = TreeForeignKey(
         Category,
@@ -77,8 +76,4 @@ class Coin(models.Model):
         return f'*{self.category}*\n' \
            f'{self.title}\n' \
            f'{self.seller}\n' \
-           f'{self.coin_url}'
-
-    @property
-    def coin_url(self):
-        return f'{ROOT_URL}/viewtopic.php?f={self.category.id}&t={self.id}'
+           f'{self.url}'

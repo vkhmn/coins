@@ -1,4 +1,4 @@
-from apps.coins.models import Coin
+from apps.coins.models import Coin, Category, Seller
 from config.celery import app
 from apps.coins.services import CoinsCollect
 from apps.core.models import User, Status, CoinUser
@@ -20,11 +20,14 @@ def collect():
         for params in user.filters.all():
             category = params.category
             pattern = params.pattern
-            coins_collection.init(category, pattern)
+            coins_collection.init(category.id, pattern)
             coins_collection.parse_coins()
         for coin in coins_collection:
+            coin['seller'], _ = Seller.objects.get_or_create(
+                name=coin.get('seller')
+            )
             coins.append(
-                (coin.to_db(), user)
+                (coin, user)
             )
 
     for coin, user in coins:
