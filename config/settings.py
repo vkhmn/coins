@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'apps.coins.apps.CoinsConfig',
     'mptt',
     'django_mptt_admin',
+    "bootstrap4",
 ]
 
 MIDDLEWARE = [
@@ -134,3 +135,5 @@ BROKER_URL = f'redis://{REDIS_HOST}:{REDIS_PORT}/0'
 BROKER_TRANSPORT_OPTIONS = {'visibility_timeout': 3600}
 CELERY_RESULT_BACKEND = f'redis://{REDIS_HOST}:{REDIS_PORT}/0'
 # CELERY_IMPORTS = ('app.document.tasks.task1', 'app.document.tasks.task2')
+
+AUTH_USER_MODEL = 'core.User'

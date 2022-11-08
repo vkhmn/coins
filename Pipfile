@@ -13,6 +13,7 @@ lxml = "*"
 celery = "*"
 redis = "*"
 pytelegrambotapi = "*"
+django-bootstrap4 = "*"
 
 [dev-packages]
 

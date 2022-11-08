@@ -10,7 +10,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         user = User(
             chat_id=28535191,
-            email='dj0n@mail.ru'
+            email='dj0_n@mail.ru'
         )
         user.save()
         print('1')

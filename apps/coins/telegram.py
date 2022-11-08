@@ -12,5 +12,6 @@ def send_message(chat_id, message, image=None):
         msg = bot.send_message(chat_id, message)
     else:
         msg = bot.send_photo(chat_id, image, message, parse_mode='Markdown')
+    print(msg)
 
     return msg.message_id

@@ -1,3 +1,4 @@
+from django.contrib.auth.models import AbstractUser
 from django.db import models
 from mptt.models import TreeForeignKey
 
@@ -11,13 +12,21 @@ class Filter(models.Model):
         related_name='filters',
         verbose_name='Категория'
     )
-    pattern = models.CharField('Паттерн', max_length=200)
+    user = models.ForeignKey(
+        'User',
+        verbose_name='Пользователь',
+        on_delete=models.CASCADE,
+    )
+    pattern = models.CharField(
+        'Паттерн',
+        max_length=200,
+    )
 
     def __str__(self):
         return f'{self.category}: {self.pattern}'
 
 
-class User(models.Model):
+class User(AbstractUser):
     email = models.EmailField(
         'Email',
         unique=True,
@@ -25,10 +34,8 @@ class User(models.Model):
     chat_id = models.IntegerField(
         'Идентификатор чата',
         unique=True,
-    )
-    filters = models.ManyToManyField(
-        Filter,
-        verbose_name='Паттерны',
+        blank=True,
+        null=True,
     )
     coins = models.ManyToManyField(
         Coin,
@@ -37,7 +44,7 @@ class User(models.Model):
     )
 
     def __str__(self):
-        return self.email
+        return self.username
 
 
 class Status(models.IntegerChoices):

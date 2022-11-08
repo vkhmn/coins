@@ -6,7 +6,6 @@ from apps.coins.models import Coin, Seller, Category
 
 @admin.register(Coin)
 class CoinAdmin(admin.ModelAdmin):
-#    prepopulated_fields = {"id": ("title",)}
     pass
 
 
@@ -17,5 +16,4 @@ class SellerAdmin(admin.ModelAdmin):
 
 @admin.register(Category)
 class CategoryAdmin(DjangoMpttAdmin):
-    #    prepopulated_fields = {"id": ("title",)}
     pass

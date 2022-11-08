@@ -1,7 +1,7 @@
 from apps.coins.models import Coin, Category, Seller
 from config.celery import app
 from apps.coins.services import CoinsCollect
-from apps.core.models import User, Status, CoinUser
+from apps.core.models import User, Status, CoinUser, Filter
 from apps.coins.telegram import send_message
 
 
@@ -13,21 +13,20 @@ def coins_collect():
 
 
 def collect():
-    query_set = User.objects.prefetch_related('filters')
+    query_set = Filter.objects.select_related('user')
     coins = []
-    for user in query_set:
-        coins_collection = CoinsCollect()
-        for params in user.filters.all():
-            category = params.category
-            pattern = params.pattern
-            coins_collection.init(category.id, pattern)
-            coins_collection.parse_coins()
+    for fltr in query_set:
+        coins_collection = CoinsCollect(
+            fltr.category.id,
+            fltr.pattern,
+        )
+        coins_collection.parse_coins()
         for coin in coins_collection:
             coin['seller'], _ = Seller.objects.get_or_create(
                 name=coin.get('seller')
             )
             coins.append(
-                (coin, user)
+                (coin, fltr.user)
             )
 
     for coin, user in coins:
@@ -43,6 +42,9 @@ def send_messages():
         status=Status.NEW
     )
     for coin in coins:
+        if coin.user.chat_id is None:
+            continue
+
         message_id = send_message(
             chat_id=coin.user.chat_id,
             message=coin.coin.to_msg(),
