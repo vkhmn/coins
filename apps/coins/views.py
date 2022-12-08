@@ -15,11 +15,12 @@ class HomeView(LoginRequiredMixin, ListView):
     template_name = 'core/index.html'
     context_object_name = 'coins'
     login_url = reverse_lazy('login')
+    paginate_by = 10
 
     def get_queryset(self):
         return CoinUser.objects.select_related(
             'coin'
-        ).filter(user=self.request.user)
+        ).filter(user=self.request.user).order_by('-coin__time_create')
 
 
 @login_required

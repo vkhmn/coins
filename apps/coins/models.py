@@ -60,7 +60,12 @@ class Coin(models.Model):
         on_delete=models.CASCADE,
         verbose_name='Продавец'
     )
-    end_date = models.DateField(
+    time_create = models.DateField(
+        'Дата создания аукцина',
+        blank=True,
+        null=True
+    )
+    time_end = models.DateField(
         'Дата окончания аукциона',
         blank=True,
         null=True

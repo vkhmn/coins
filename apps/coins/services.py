@@ -45,6 +45,13 @@ class CoinsCollect:
         async with session.get(url=coin.get('url')) as response:
             response_text = await response.text()
             soup = BeautifulSoup(response_text, 'lxml')
+
+            time_create = datetime.strptime(soup.find(
+                'b', text='Добавлено:').find_parent(
+                'td').text.strip(), 'Добавлено: %d-%m-%Y %H:%M:%S')
+            if time_create:
+                coin['time_create'] = time_create
+
             img_in = soup.find('img', src=re.compile(r'thumb\/'))
             img_out = soup.find('img', alt='Изображение')
             img = img_in or img_out or None
@@ -86,7 +93,8 @@ class CoinsCollect:
                         title=title,
                         image=None,
                         seller=user,
-                        end_date=date,
+                        time_end=date,
+                        time_create=None,  # need parsing datetime
                     )
                     tasks += [asyncio.create_task(
                         self.__get_img(session, coin)
