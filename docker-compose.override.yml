@@ -16,7 +16,7 @@ services:
     command: >
       sh -c "pipenv run pyhton manage.py collect_coins"
     env_file:
-      - ./.evn.prod
+      - ./.env.prod
 
   nginx:
     build: ./nginx

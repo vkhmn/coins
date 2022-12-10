@@ -18,4 +18,4 @@ services:
     volumes:
       - ./django_coins:/app
     env_file:
-      - ./.evn.dev
+      - ./.env.dev
