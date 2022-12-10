@@ -1,0 +1,21 @@
+version: '3'
+ 
+services:
+  web:
+    command: >
+      sh -c "pipenv run python manage.py migrate &&
+             pipenv run python manage.py runserver 0.0.0.0:8000"
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./django_coins:/app
+    env_file:
+      - ./.env.dev
+
+  collect:
+    command: >
+      sh -c "pipenv run pyhton manage.py collect_coins"
+    volumes:
+      - ./django_coins:/app
+    env_file:
+      - ./.evn.dev

@@ -1,5 +1,7 @@
 .idea/
 .env
-celerybeat-schedule
-dump.rdb
+.env.dev
+.env.prod
 *.pyc
+db.sqlite3
+TODO

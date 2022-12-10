@@ -1,0 +1,49 @@
+{% extends 'core/base.html' %}
+
+{% block content %}
+    			<table class="table">
+						<thead>
+							<tr>
+								<th>
+									#
+								</th>
+								<th>
+									Дата
+								</th>
+								<th>
+									Категория
+								</th>
+								<th>
+									Наименование
+								</th>
+								<th>
+									Изображение
+								</th>
+							</tr>
+						</thead>
+						<tbody>
+                        {% for coin in coins %}
+							<tr>
+								<td>
+                                </td>
+								<td>
+                                    {{ coin.coin.time_create|date:"d-m-Y H:i:s" }}
+								</td>
+								<td>
+                                    {{ coin.coin.category }}
+								</td>
+								<td>
+                                    {{ coin.coin.title }}
+								</td>
+								<td>
+                                    <a href="{{ coin.coin.url }}"><img src="{{ coin.coin.image }}" height="100"></a>
+								</td>
+							</tr>
+                        {% endfor %}
+						</tbody>
+					</table>
+    {% include 'core/paginate.html' %}
+{% endblock %}
+
+{% block left_menu %}
+{% endblock %}

@@ -1,0 +1,21 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+gunicorn = "*"
+django = "*"
+django-mptt = "*"
+django-mptt-admin = "*"
+django-debug-toolbar = "*"
+bs4 = "*"
+aiohttp = "*"
+lxml = "*"
+pytelegrambotapi = "*"
+django-bootstrap4 = "*"
+
+[dev-packages]
+
+[requires]
+python_version = "3.10"
