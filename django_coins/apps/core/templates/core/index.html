@@ -10,6 +10,9 @@
 								<th>
 									Дата
 								</th>
+                                <th>
+                                    Дата окончания
+                                </th>
 								<th>
 									Категория
 								</th>
@@ -21,6 +24,7 @@
 								</th>
 							</tr>
 						</thead>
+                        {% now "d-m-Y" as current_date %}
 						<tbody>
                         {% for coin in coins %}
 							<tr>
@@ -30,10 +34,19 @@
                                     {{ coin.coin.time_create|date:"d-m-Y H:i:s" }}
 								</td>
 								<td>
+                                    {% if coin.coin.time_end %}
+                                        {{ coin.coin.time_end|date:"d-m-Y" }}
+                                    {% endif %}
+								</td>
+								<td>
                                     {{ coin.coin.category }}
 								</td>
 								<td>
-                                    {{ coin.coin.title }}
+                                    {% if current_date == coin.coin.time_end|date:"d-m-Y" %}
+                                        <div class="text-danger">{{ coin.coin.title }}</div>
+                                    {% else %}
+                                        {{ coin.coin.title }}
+                                    {% endif %}
 								</td>
 								<td>
                                     <a href="{{ coin.coin.url }}"><img src="{{ coin.coin.image }}" height="100"></a>
@@ -46,4 +59,5 @@
 {% endblock %}
 
 {% block left_menu %}
+
 {% endblock %}
