@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render, redirect
@@ -20,7 +22,22 @@ class HomeView(LoginRequiredMixin, ListView):
     def get_queryset(self):
         return CoinUser.objects.select_related(
             'coin'
-        ).filter(user=self.request.user).order_by('-coin__time_create')
+        ).filter(
+            user=self.request.user
+        ).filter(
+            coin__time_end__gte=datetime.now()
+        ).order_by('-coin__time_create')
+
+
+class ArchiveView(HomeView):
+    def get_queryset(self):
+        return CoinUser.objects.select_related(
+            'coin'
+        ).filter(
+            user=self.request.user
+        ).filter(
+            coin__time_end__lt=datetime.now()
+        ).order_by('-coin__time_create')
 
 
 @login_required
@@ -45,3 +62,4 @@ class SettingsView(LoginRequiredMixin, UpdateView):
 
     def get_object(self, queryset=None):
         return self.request.user
+
