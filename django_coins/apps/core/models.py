@@ -19,7 +19,7 @@ class Filter(models.Model):
     )
     pattern = models.CharField(
         'Паттерн',
-        max_length=200,
+        max_length=1000,
     )
     is_unc = models.BooleanField(
         'UNC',

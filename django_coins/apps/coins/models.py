@@ -54,7 +54,11 @@ class Coin(models.Model):
         verbose_name='Категория'
     )
     title = models.CharField('Заголовок', max_length=100)
-    image = models.URLField('Url изображения')
+    image = models.URLField(
+        'Url изображения',
+        blank=True,
+        null=True
+    )
     seller = models.ForeignKey(
         Seller,
         on_delete=models.CASCADE,
