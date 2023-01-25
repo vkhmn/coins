@@ -49,29 +49,32 @@ class CoinsCollect:
 
             img_in = soup.find('img', src=re.compile(r'thumb\/'))
             img_out = soup.find('img', alt='Изображение')
-            img = img_in or img_out or None
+            img_big = soup.find('img', src=re.compile(r'small\/'))
+            img = img_in or img_out or img_big or None
             if img:
                 coin['image'] = img.get('src', None)
         return coin
 
     async def _filter(self, date, title, desc) -> bool:
-        """"""
-        searching = bool(
-            re.search(
-                self.__pattern,
-                title
-            )
-        )
-        is_unc = not bool(self.__unc_pattern)
-        if self.__unc_pattern:
-            is_unc = bool(
-                re.search(
-                    f'{self.__unc_pattern}',
-                    (title + desc).lower()
-                )
-            )
-        old_date = self.__is_old_date(date)
-        return searching and is_unc and (not old_date or self.OLD_DATE)
+        def parse_filter() -> list:
+            for item in self.__pattern.split('|'):
+                yield item.split('&')
+
+        searching = [
+            (bool(re.search(filter_elem, title)) for filter_elem in filter_item)
+            for filter_item in parse_filter()
+        ]
+
+        # Search unc in (title, desc)
+        is_unc = bool(
+            re.search(f'{self.__unc_pattern}', (title + desc).lower())
+        ) if self.__unc_pattern else not bool(self.__unc_pattern)
+
+        is_not_old_date = not self.__is_old_date(date) or self.OLD_DATE
+
+        res = any(all([*item, is_unc, is_not_old_date]) for item in searching)
+        print(res, searching)
+        return res
 
     async def __get_page_data(self, session, page_url):
         async with session.get(url=page_url) as response:
