@@ -22,7 +22,7 @@ class CoinsCollect:
         self.__coins = []
         self.__category = category
         self.__pattern = pattern.lower()
-        self.__unc_pattern = unc_pattern
+        self.__unc_pattern = unc_pattern.lower() if unc_pattern else None
         self.__url = f'{ROOT_URL}/viewforum.php?f={category}'
 
     def __page_url(self, page):
@@ -68,13 +68,11 @@ class CoinsCollect:
         # Search unc in (title, desc)
         is_unc = bool(
             re.search(f'{self.__unc_pattern}', (title + desc).lower())
-        ) if self.__unc_pattern else not bool(self.__unc_pattern)
+        ) if self.__unc_pattern else True
 
         is_not_old_date = not self.__is_old_date(date) or self.OLD_DATE
 
-        res = any(all([*item, is_unc, is_not_old_date]) for item in searching)
-        print(res, searching)
-        return res
+        return any(all([*item, is_unc, is_not_old_date]) for item in searching)
 
     async def __get_page_data(self, session, page_url):
         async with session.get(url=page_url) as response:
