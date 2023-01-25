@@ -21,7 +21,7 @@ class CoinsCollect:
     def __init__(self, category, pattern, unc_pattern):
         self.__coins = []
         self.__category = category
-        self.__pattern = pattern
+        self.__pattern = pattern.lower()
         self.__unc_pattern = unc_pattern
         self.__url = f'{ROOT_URL}/viewforum.php?f={category}'
 
