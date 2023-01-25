@@ -54,6 +54,25 @@ class CoinsCollect:
                 coin['image'] = img.get('src', None)
         return coin
 
+    async def _filter(self, date, title, desc) -> bool:
+        """"""
+        searching = bool(
+            re.search(
+                self.__pattern,
+                title
+            )
+        )
+        is_unc = not bool(self.__unc_pattern)
+        if self.__unc_pattern:
+            is_unc = bool(
+                re.search(
+                    f'{self.__unc_pattern}',
+                    (title + desc).lower()
+                )
+            )
+        old_date = self.__is_old_date(date)
+        return searching and is_unc and (not old_date or self.OLD_DATE)
+
     async def __get_page_data(self, session, page_url):
         async with session.get(url=page_url) as response:
             tasks = []
@@ -64,39 +83,26 @@ class CoinsCollect:
                 title = td.text.strip()
                 desc = td.get('title')
                 date = self.__find_date(title + desc)
-                searching = bool(
-                    re.search(
-                        self.__pattern,
-                        title
-                    )
+                if not await self._filter(date, title, desc):
+                    continue
+
+                url = td.get('href')[1:]
+                absolute_url = f'{ROOT_URL}{url}'
+                user = td.find_parent('tr').find(
+                    'p', class_='topicauthor'
+                ).text.strip()
+                coin = dict(
+                    category_id=self.__category,
+                    url=absolute_url,
+                    title=title,
+                    image=None,
+                    seller=user,
+                    time_end=date,
+                    time_create=None,
                 )
-                is_unc = not bool(self.__unc_pattern)
-                if self.__unc_pattern:
-                    is_unc = bool(
-                        re.search(
-                            f'{self.__unc_pattern}',
-                            (title + desc).lower()
-                        )
-                    )
-                old_date = self.__is_old_date(date)
-                if searching and is_unc and (not old_date or self.OLD_DATE):
-                    url = td.get('href')[1:]
-                    absolute_url = f'{ROOT_URL}{url}'
-                    user = td.find_parent('tr').find(
-                        'p', class_='topicauthor'
-                    ).text.strip()
-                    coin = dict(
-                        category_id=self.__category,
-                        url=absolute_url,
-                        title=title,
-                        image=None,
-                        seller=user,
-                        time_end=date,
-                        time_create=None,
-                    )
-                    tasks += [asyncio.create_task(
-                        self.__get_img(session, coin)
-                    )]
+                tasks += [asyncio.create_task(
+                    self.__get_img(session, coin)
+                )]
         return tasks
 
     async def __gather_data(self):
