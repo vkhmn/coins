@@ -79,7 +79,7 @@ class Coin(models.Model):
         return self.title
 
     def to_msg(self):
-        return f'*{self.category}*\n' \
+        return f'<b>{self.category}</b>\n' \
            f'{self.title}\n' \
            f'{self.seller}\n' \
            f'{self.url}'
