@@ -125,7 +125,7 @@ class CoinsCollect:
                 connector=conn,
         ) as session:
             response = await session.get(url=self.__url, ssl=False)
-            logger.info(await response.status)
+            logger.info(response.status)
             soup = BeautifulSoup(await response.text(), 'lxml')
             page_urls = soup.find(
                 'td', class_="gensmall", align="right"
