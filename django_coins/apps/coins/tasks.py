@@ -3,6 +3,8 @@ from apps.coins.services import CoinsCollect
 from apps.core.models import Status, CoinUser, Filter
 from apps.coins.telegram import send_message
 
+from config.settings.dev import logger
+
 
 def collect():
     query_set = Filter.objects.select_related('user')
@@ -14,7 +16,13 @@ def collect():
             fltr.pattern,
             unc_pattern,
         )
-        coins_collection.parse_coins()
+
+        try:
+            coins_collection.parse_coins()
+        except Exception as e:
+            logger.error(e)
+            continue
+
         for coin in coins_collection:
             coin['seller'], _ = Seller.objects.get_or_create(
                 name=coin.get('seller')

@@ -5,7 +5,7 @@ import re
 
 import aiohttp
 from bs4 import BeautifulSoup
-
+from config.settings.dev import logger
 
 ROOT_URL = 'https://coins.lave.ru/forum'
 
@@ -16,6 +16,7 @@ class CoinsCollect:
     _headers = {
         'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64; rv:79.0) '
                       'Gecko/20100101 Firefox/79.0',
+
     }
 
     def __init__(self, category, pattern, unc_pattern):
@@ -37,6 +38,8 @@ class CoinsCollect:
 
     @classmethod
     async def __get_img(cls, session, coin: dict):
+
+        logger.info(f'Start')
         async with session.get(url=coin.get('url')) as response:
             response_text = await response.text()
             soup = BeautifulSoup(response_text, 'lxml')
@@ -53,6 +56,9 @@ class CoinsCollect:
             img = img_in or img_out or img_big or None
             if img:
                 coin['image'] = img.get('src', None)
+
+            logger.info(f"{coin.get('image')}")
+            logger.info(f'Finished')
         return coin
 
     async def _filter(self, date, title, desc) -> bool:
@@ -75,6 +81,7 @@ class CoinsCollect:
         return any(all([*item, is_unc, is_not_old_date]) for item in searching)
 
     async def __get_page_data(self, session, page_url):
+        logger.info(f'Start')
         async with session.get(url=page_url) as response:
             tasks = []
             response_text = await response.text()
@@ -104,11 +111,21 @@ class CoinsCollect:
                 tasks += [asyncio.create_task(
                     self.__get_img(session, coin)
                 )]
+
+        logger.info(f'Finished')
         return tasks
 
     async def __gather_data(self):
-        async with aiohttp.ClientSession(headers=self._headers) as session:
-            response = await session.get(url=self.__url)
+        logger.info(f'Start')
+        logger.info(f'{self.__url}')
+        conn = aiohttp.TCPConnector(limit_per_host=10)
+        async with aiohttp.ClientSession(
+                headers=self._headers,
+                trust_env=True,
+                connector=conn,
+        ) as session:
+            response = await session.get(url=self.__url, ssl=False)
+            logger.info(response.status)
             soup = BeautifulSoup(await response.text(), 'lxml')
             page_urls = soup.find(
                 'td', class_="gensmall", align="right"
@@ -130,11 +147,14 @@ class CoinsCollect:
                 await asyncio.gather(*tasks)
             )
             get_coins_image_tasks = await asyncio.gather(*coins_founded_tasks)
+        logger.info(f'Finished')
         return get_coins_image_tasks
 
     def parse_coins(self):
+        logger.info(f'Start')
         coins = list(asyncio.run(self.__gather_data()))
         self.__coins.extend(coins)
+        logger.info(f'Finished')
 
     # tested
     @classmethod

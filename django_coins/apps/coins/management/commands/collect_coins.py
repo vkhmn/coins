@@ -3,6 +3,7 @@ import time
 from django.core.management import BaseCommand
 
 from apps.coins.tasks import collect, send_messages
+from config.settings.dev import logger
 
 
 class Command(BaseCommand):
@@ -14,6 +15,6 @@ class Command(BaseCommand):
                 collect()
                 send_messages()
             except Exception as e:
-                print(e)
-            print('Sleep 60 * 60')
+                logger.error(e)
+            logger.info('Sleep 60 * 60')
             time.sleep(60 * 60)

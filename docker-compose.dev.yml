@@ -14,7 +14,7 @@ services:
 
   collect:
     command: >
-      sh -c "pipenv run pyhton manage.py collect_coins"
+      sh -c "pipenv run python manage.py collect_coins"
     volumes:
       - ./django_coins:/app
     env_file:
