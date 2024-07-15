@@ -67,7 +67,7 @@ class CoinsCollect:
                 yield item.split('&')
 
         searching = [
-            (bool(re.search(filter_elem, title)) for filter_elem in filter_item)
+            (bool(re.search(filter_elem, (title + desc).lower())) for filter_elem in filter_item)
             for filter_item in parse_filter()
         ]
 
