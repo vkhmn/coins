@@ -7,7 +7,7 @@ import aiohttp
 from bs4 import BeautifulSoup
 from config.settings.dev import logger
 
-ROOT_URL = 'https://coins.lave.ru/forum'
+ROOT_URL = 'https://lave.pro'
 
 
 class CoinsCollect:
